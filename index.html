@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171914">
+  <meta name="description" content="TB-03 Lab: a dependency-free browser acid bassline synthesizer and 16-step sequencer.">
+  <title>TB-03 Lab — Browser Acid Sequencer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="js/core.js" defer></script>
+  <script src="js/audio.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Browser acid instrument / revision 1.0</p>
+        <h1><span>TB—03</span> LAB</h1>
+      </div>
+      <p class="tribute-badge">A browser tribute · not affiliated with Roland</p>
+    </header>
+
+    <main id="instrument" class="instrument" aria-label="TB-03 Lab acid bassline instrument">
+      <section class="instrument-top" aria-label="Instrument identity and display">
+        <div class="machine-copy">
+          <p class="machine-type">MONOPHONIC BASSLINE SYNTHESIZER</p>
+          <p class="machine-subtitle">Pattern memory · analog-style signal path · Web Audio</p>
+        </div>
+        <div class="display-panel" aria-label="Sequencer display">
+          <div class="display-cell">
+            <span>PATTERN</span>
+            <strong id="pattern-readout">P1</strong>
+          </div>
+          <div class="display-cell">
+            <span>STEP</span>
+            <strong id="step-readout">01</strong>
+          </div>
+          <div class="display-cell tempo-cell">
+            <span>TEMPO</span>
+            <strong id="tempo-readout">128</strong>
+          </div>
+          <div class="meter" aria-hidden="true">
+            <span id="meter-fill" class="meter-fill"></span>
+          </div>
+          <p class="audio-indicator"><span class="status-led"></span>AUDIO <strong id="audio-state">SLEEPING</strong></p>
+        </div>
+      </section>
+
+      <section class="control-deck" aria-label="Sound controls">
+        <div class="control-bank sound-bank">
+          <div class="bank-heading">
+            <h2>VOICE</h2>
+            <div class="wave-switch" role="group" aria-label="Oscillator waveform">
+              <button type="button" data-waveform="sawtooth" aria-pressed="true">SAW</button>
+              <button type="button" data-waveform="square" aria-pressed="false">SQUARE</button>
+            </div>
+          </div>
+
+          <div class="dial-row">
+            <label class="dial-control" for="tuning-control">
+              <span class="control-label">TUNING</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="tuning-control" type="range" min="-100" max="100" step="1" value="0" data-setting="tuning">
+              </span>
+              <output data-output-for="tuning">0 ct</output>
+            </label>
+            <label class="dial-control primary-control" for="cutoff-control">
+              <span class="control-label">CUTOFF</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="cutoff-control" type="range" min="0" max="100" step="1" value="64" data-setting="cutoff">
+              </span>
+              <output data-output-for="cutoff">64%</output>
+            </label>
+            <label class="dial-control" for="resonance-control">
+              <span class="control-label">RESONANCE</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="resonance-control" type="range" min="0" max="100" step="1" value="62" data-setting="resonance">
+              </span>
+              <output data-output-for="resonance">62%</output>
+            </label>
+            <label class="dial-control" for="env-mod-control">
+              <span class="control-label">ENV MOD</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="env-mod-control" type="range" min="0" max="100" step="1" value="74" data-setting="envMod">
+              </span>
+              <output data-output-for="envMod">74%</output>
+            </label>
+            <label class="dial-control" for="decay-control">
+              <span class="control-label">DECAY</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="decay-control" type="range" min="0" max="100" step="1" value="46" data-setting="decay">
+              </span>
+              <output data-output-for="decay">46%</output>
+            </label>
+            <label class="dial-control" for="accent-control">
+              <span class="control-label">ACCENT</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="accent-control" type="range" min="0" max="100" step="1" value="62" data-setting="accent">
+              </span>
+              <output data-output-for="accent">62%</output>
+            </label>
+          </div>
+        </div>
+
+        <div class="deck-divider" aria-hidden="true"></div>
+
+        <div class="control-bank motion-bank">
+          <div class="bank-heading">
+            <h2>MOTION / OUTPUT</h2>
+            <span class="signal-note">DRIVE → DELAY → OUT</span>
+          </div>
+          <div class="dial-row motion-controls">
+            <label class="dial-control" for="tempo-control">
+              <span class="control-label">TEMPO</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="tempo-control" type="range" min="40" max="300" step="1" value="128" data-setting="tempo">
+              </span>
+              <output data-output-for="tempo">128 BPM</output>
+            </label>
+            <label class="dial-control" for="swing-control">
+              <span class="control-label">SWING</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="swing-control" type="range" min="0" max="75" step="1" value="18" data-setting="swing">
+              </span>
+              <output data-output-for="swing">18%</output>
+            </label>
+            <label class="dial-control" for="drive-control">
+              <span class="control-label">DRIVE</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="drive-control" type="range" min="0" max="100" step="1" value="30" data-setting="drive">
+              </span>
+              <output data-output-for="drive">30%</output>
+            </label>
+            <label class="dial-control" for="delay-control">
+              <span class="control-label">DELAY TIME</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="delay-control" type="range" min="0" max="700" step="5" value="180" data-setting="delayTime">
+              </span>
+              <output data-output-for="delayTime">180 ms</output>
+            </label>
+            <label class="dial-control" for="feedback-control">
+              <span class="control-label">FEEDBACK</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="feedback-control" type="range" min="0" max="80" step="1" value="28" data-setting="feedback">
+              </span>
+              <output data-output-for="feedback">28%</output>
+            </label>
+            <label class="dial-control output-control" for="volume-control">
+              <span class="control-label">VOLUME</span>
+              <span class="dial">
+                <span class="dial-face" aria-hidden="true"><span class="dial-mark"></span></span>
+                <input id="volume-control" type="range" min="0" max="100" step="1" value="74" data-setting="volume">
+              </span>
+              <output data-output-for="volume">74%</output>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="sequence-deck" aria-labelledby="sequencer-heading">
+        <div class="sequence-toolbar">
+          <div>
+            <p class="section-kicker">MEMORY / STEP WRITE</p>
+            <h2 id="sequencer-heading">16-STEP SEQUENCER</h2>
+          </div>
+          <div class="transport" aria-label="Transport controls">
+            <button id="start-transport" type="button" class="transport-button start-button">START</button>
+            <button id="stop-transport" type="button" class="transport-button stop-button" disabled>STOP</button>
+          </div>
+        </div>
+
+        <div class="pattern-bar">
+          <div>
+            <span class="mini-label">PATTERN MEMORY</span>
+            <div id="slot-row" class="slot-row" role="group" aria-label="Pattern memory slots"></div>
+          </div>
+          <div class="pattern-actions">
+            <button id="random-pattern" type="button" class="utility-button">RANDOMIZE</button>
+            <button id="clear-pattern" type="button" class="utility-button danger-button">CLEAR</button>
+          </div>
+        </div>
+
+        <div id="step-grid" class="step-grid" aria-label="Pattern steps"></div>
+
+        <div class="editor-panel">
+          <div class="note-entry">
+            <div class="editor-heading">
+              <div>
+                <span class="mini-label">NOTE ENTRY</span>
+                <h3>Pitch</h3>
+              </div>
+              <p>Note and rest entry advance one step.</p>
+            </div>
+            <div id="note-pad" class="note-pad" role="group" aria-label="Enter note"></div>
+          </div>
+
+          <div class="step-properties">
+            <div class="property-block octave-block">
+              <span class="mini-label">OCTAVE</span>
+              <div class="octave-control">
+                <button id="octave-down" type="button" aria-label="Lower selected step one octave">−</button>
+                <output id="octave-readout" aria-label="Selected octave">2</output>
+                <button id="octave-up" type="button" aria-label="Raise selected step one octave">+</button>
+              </div>
+            </div>
+            <div class="property-block articulation-block">
+              <span class="mini-label">ARTICULATION</span>
+              <div class="articulation-controls">
+                <button id="rest-step" type="button" aria-pressed="false">REST + NEXT</button>
+                <button id="accent-step" type="button" aria-pressed="false">ACCENT</button>
+                <button id="slide-step" type="button" aria-pressed="false">SLIDE</button>
+              </div>
+            </div>
+            <label class="property-block length-block" for="pattern-length">
+              <span class="mini-label">PATTERN LENGTH</span>
+              <span class="length-control">
+                <input id="pattern-length" type="range" min="1" max="16" step="1" value="16">
+                <output id="length-readout">16</output>
+              </span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="status-strip" aria-label="Instrument status">
+        <span class="status-pip" aria-hidden="true"></span>
+        <p id="status-text" aria-live="polite">Loading instrument…</p>
+        <span>LOCAL PATTERN MEMORY: AUTO-SAVE</span>
+      </section>
+    </main>
+
+    <details class="keyboard-guide">
+      <summary>Computer keyboard controls</summary>
+      <div class="key-grid">
+        <p><kbd>Space</kbd><span>Start</span></p>
+        <p><kbd>←</kbd> <kbd>→</kbd><span>Select step</span></p>
+        <p><kbd>A</kbd>–<kbd>J</kbd><span>Piano note row</span></p>
+        <p><kbd>R</kbd><span>Enter rest</span></p>
+        <p><kbd>X</kbd><span>Toggle accent</span></p>
+        <p><kbd>L</kbd><span>Toggle slide</span></p>
+        <p><kbd>[</kbd> <kbd>]</kbd><span>Octave down / up</span></p>
+        <p><kbd>1</kbd>–<kbd>8</kbd><span>Load pattern slot</span></p>
+        <p><kbd>Esc</kbd><span>Stop</span></p>
+      </div>
+    </details>
+
+    <footer>
+      <p>TB-03 Lab is an independent, browser-based sound experiment. It is not a circuit-accurate emulation and is not affiliated with or endorsed by Roland Corporation.</p>
+      <p>No samples. No tracking. No dependencies. Just Web Audio.</p>
+    </footer>
+  </div>
+</body>
+</html>

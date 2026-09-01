@@ -1,0 +1,12 @@
+{
+  "name": "tb-03-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A dependency-free browser acid bassline instrument.",
+  "scripts": {
+    "test": "node --test",
+    "smoke": "sh scripts/smoke.sh",
+    "check": "npm test && npm run smoke"
+  },
+  "license": "MIT"
+}
