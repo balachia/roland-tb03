@@ -1,5 +1,7 @@
 # TB-03 Lab
 
+**Live demo:** <https://tony.vashevko.com/roland-tb03/>
+
 TB-03 Lab is a dependency-free acid bassline instrument that runs entirely in the browser. It combines a monophonic Web Audio synth with a direct-edit 16-step sequencer, eight locally saved pattern slots, variable pattern length, swing, drive, and delay.
 
 It is designed as a playful browser tribute, not a circuit-level recreation. There are no samples, external libraries, build tools, accounts, or network requests.
@@ -70,6 +72,8 @@ If Chrome/Chromium is not installed, the smoke script reports a skip. Set `CHROM
 4. Select your main branch and the `/ (root)` folder, then save.
 
 GitHub Pages can serve the project as-is; there is no build output to configure. Pattern data remains local to each visitor's browser and is never uploaded.
+
+Architecture and future-editing notes are in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Browser support and scope
 
